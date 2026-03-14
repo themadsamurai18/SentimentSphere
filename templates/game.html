@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Game | AI Mood Journal Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page-wrap">
+        <div class="top-nav deluxe-nav fade-in">
+            <h2>Mood Game Arena</h2>
+            <div class="nav-links">
+                <a class="mini-btn" href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a class="mini-btn" href="{{ url_for('shop') }}">Shop</a>
+                <a class="mini-btn" href="{{ url_for('personality') }}">Personality Test</a>
+                <a class="mini-btn danger" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card deluxe slide-up">
+            <h1>Emotion Sprint Advanced</h1>
+            <p class="subtitle">10 random questions out of 200+ with shuffled choices. Speed + accuracy are tracked.</p>
+
+            <div id="gamePanel" class="game-panel" data-game-page="true">
+                <p id="roundInfo" class="round-info">Loading...</p>
+                <h3 id="emotionPrompt">Preparing questions...</h3>
+                <div id="gameChoices" class="choice-grid"></div>
+                <p id="gameFeedback" class="muted"></p>
+                <p id="gameScore" class="score-pill">Score: 0</p>
+                <p id="gameStats" class="muted"></p>
+            </div>
+
+            <div id="gameComplete" class="hidden">
+                <h3>Game complete!</h3>
+                <p id="finalScoreText"></p>
+                <p id="finalAccuracy"></p>
+                <p id="finalSpeed"></p>
+                <p id="finalTendency"></p>
+                <a class="btn glow-btn" href="{{ url_for('personality') }}">Continue to Personality Test</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

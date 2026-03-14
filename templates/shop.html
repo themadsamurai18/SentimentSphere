@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Shop | AI Mood Journal Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page-wrap">
+        <div class="top-nav deluxe-nav fade-in">
+            <h2>Feel-Good Shop</h2>
+            <div class="nav-links">
+                <a class="mini-btn" href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a class="mini-btn" href="{{ url_for('insights') }}">Insights</a>
+                <a class="mini-btn" href="{{ url_for('support_center') }}">Support</a>
+                <a class="mini-btn danger" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card deluxe fade-in">
+            <h3>Recommended for Your Emotion: {{ user_mood|title }}</h3>
+            <div class="product-grid">
+                {% for p in recommended %}
+                <article class="product-card">
+                    <img class="product-image" src="{{ url_for('static', filename='images/' + p.image) }}" alt="{{ p.name }}">
+                    <h4>{{ p.name }}</h4>
+                    <p class="muted">{{ p.desc }}</p>
+                    <p><strong>${{ p.price }}</strong></p>
+                    <form method="POST" action="{{ url_for('shop_order') }}">
+                        <input type="hidden" name="product_name" value="{{ p.name }}">
+                        <input type="hidden" name="price" value="{{ p.price }}">
+                        <button class="btn" type="submit">Add to Cart</button>
+                    </form>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card deluxe fade-in">
+            <h3>All Merchandise</h3>
+            <div class="product-grid">
+                {% for p in others %}
+                <article class="product-card alt">
+                    <img class="product-image" src="{{ url_for('static', filename='images/' + p.image) }}" alt="{{ p.name }}">
+                    <h4>{{ p.name }}</h4>
+                    <p class="muted">{{ p.desc }}</p>
+                    <p><strong>${{ p.price }}</strong></p>
+                    <form method="POST" action="{{ url_for('shop_order') }}">
+                        <input type="hidden" name="product_name" value="{{ p.name }}">
+                        <input type="hidden" name="price" value="{{ p.price }}">
+                        <button class="btn" type="submit">Add to Cart</button>
+                    </form>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card deluxe fade-in">
+            <h3>Your Cart</h3>
+            {% if cart %}
+                <ul class="community-list">
+                    {% for c in cart %}
+                        <li><strong>{{ c.product_name }}</strong> - ${{ c.price }} ({{ c.status }})</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="muted">No products added yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

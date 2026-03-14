@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personality Test | AI Mood Journal Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page-wrap">
+        <div class="top-nav deluxe-nav fade-in">
+            <h2>Personality Test</h2>
+            <div class="nav-links">
+                <a class="mini-btn" href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a class="mini-btn" href="{{ url_for('shop') }}">Shop</a>
+                <a class="mini-btn" href="{{ url_for('support_center') }}">Support</a>
+                <a class="mini-btn danger" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card deluxe slide-up">
+            <h1>Adaptive Personality Test</h1>
+            <p class="subtitle">10 interrelated questions are sampled from a 1000-question trait bank each attempt.</p>
+
+            {% if result %}
+                <div class="personality-result">
+                    <h3>{{ result.name }}</h3>
+                    <p>{{ result.description }}</p>
+                    <p><strong>Personal advice:</strong> {{ result.advice }}</p>
+
+                    {% if trait_scores %}
+                    <div class="trait-grid">
+                        {% for trait, value in trait_scores.items() %}
+                        <div>
+                            <p><strong>{{ trait.replace('_', ' ')|title }}</strong>: {{ value }}</p>
+                            <div class="meter"><div class="fill" style="width: {{ (value / 5 * 100)|round(0) }}%"></div></div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <a class="btn glow-btn" href="{{ url_for('insights') }}">See Full Insights</a>
+                </div>
+            {% else %}
+            <form method="POST" class="form personality-form">
+                {% for q in questions %}
+                <div class="q-block">
+                    <label>{{ loop.index }}. {{ q.text }}</label>
+                    <select name="q_{{ q.id }}" required>
+                        <option value="">Select</option>
+                        <option value="1">Strongly Disagree</option>
+                        <option value="2">Disagree</option>
+                        <option value="3">Neutral</option>
+                        <option value="4">Agree</option>
+                        <option value="5">Strongly Agree</option>
+                    </select>
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn glow-btn">Generate Personality Result</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

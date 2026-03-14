@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | AI Mood Journal Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-theme="{{ current_theme }}">
+    <div class="hero-blur"></div>
+    <div class="page-wrap">
+        <div class="top-nav deluxe-nav fade-in">
+            <h2>Welcome, {{ username }} &#128075;</h2>
+            <div class="nav-links">
+                <a class="mini-btn" href="{{ url_for('history') }}">History</a>
+                <a class="mini-btn" href="{{ url_for('game') }}">Mood Game</a>
+                <a class="mini-btn" href="{{ url_for('personality') }}">Personality</a>
+                <a class="mini-btn" href="{{ url_for('shop') }}">Shop</a>
+                <a class="mini-btn" href="{{ url_for('insights') }}">Insights</a>
+                <a class="mini-btn" href="{{ url_for('support_center') }}">Support</a>
+                <a class="mini-btn danger" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="dashboard-grid">
+            <section class="card deluxe main-card slide-up">
+                <h1>How do you feel right now?</h1>
+                <p class="subtitle">Write naturally. The app analyzes your mood and updates your visual dashboard.</p>
+
+                <form method="POST" class="form">
+                    <label for="entry_text">Mood Journal Entry</label>
+                    <textarea id="entry_text" name="entry_text" rows="6" placeholder="I feel... because..." required></textarea>
+                    <p id="charCount" class="muted">0 characters</p>
+                    <button type="submit" class="btn glow-btn">Analyze My Mood</button>
+                </form>
+            </section>
+
+            <aside class="card deluxe community-card fade-in" id="communityBox">
+                <h3>Live Community Pulse (Anonymous)</h3>
+                <div class="stats-grid">
+                    <div class="stat-chip">
+                        <span class="label">Total moods today</span>
+                        <strong id="totalMoods">{{ community_stats.total }}</strong>
+                    </div>
+                    <div class="stat-chip">
+                        <span class="label">Positive %</span>
+                        <strong id="pctPositive">{{ community_stats.positive_pct }}%</strong>
+                    </div>
+                    <div class="stat-chip">
+                        <span class="label">Neutral %</span>
+                        <strong id="pctNeutral">{{ community_stats.neutral_pct }}%</strong>
+                    </div>
+                    <div class="stat-chip">
+                        <span class="label">Negative %</span>
+                        <strong id="pctNegative">{{ community_stats.negative_pct }}%</strong>
+                    </div>
+                    <div class="stat-chip full">
+                        <span class="label">Most common emotion</span>
+                        <strong id="mostCommonEmotion">{{ community_stats.most_common_emotion }}</strong>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <section class="card deluxe challenge-card fade-in">
+            <h3>Daily Challenge</h3>
+            <p>{{ challenge.text }}</p>
+            {% if challenge.completed %}
+                <span class="done-badge">Completed today</span>
+            {% else %}
+                <form method="POST" action="{{ url_for('challenge_complete') }}">
+                    <button type="submit" class="btn">Mark as Completed</button>
+                </form>
+            {% endif %}
+        </section>
+
+        {% if result %}
+        <section class="card deluxe result-card fade-in" data-result-theme="{{ result.theme }}">
+            <h2>Result: {{ result.emoji }} {{ result.mood }} / {{ result.emotion|title }} <span class="score-chip">Polarity {{ result.polarity }}</span></h2>
+
+            <div class="mood-overview-grid">
+                <div class="meter-card">
+                    <h4>Mood Score</h4>
+                    <div class="meter"><div class="fill" style="width: {{ result.mood_score }}%"></div></div>
+                    <p>{{ result.mood_score }}/100</p>
+                </div>
+                <div class="meter-card">
+                    <h4>Stress Gauge</h4>
+                    <div class="meter stress"><div class="fill" style="width: {{ result.stress }}%"></div></div>
+                    <p>{{ result.stress }}/100</p>
+                </div>
+                <div class="meter-card">
+                    <h4>Happiness</h4>
+                    <div class="meter happy"><div class="fill" style="width: {{ result.happiness }}%"></div></div>
+                    <p>{{ result.happiness }}/100</p>
+                </div>
+                <div class="meter-card">
+                    <h4>Energy</h4>
+                    <div class="meter energy"><div class="fill" style="width: {{ result.energy }}%"></div></div>
+                    <p>{{ result.energy }}/100</p>
+                </div>
+                <div class="meter-card">
+                    <h4>Focus</h4>
+                    <div class="meter focus"><div class="fill" style="width: {{ result.focus }}%"></div></div>
+                    <p>{{ result.focus }}/100</p>
+                </div>
+                <div class="meter-card quote-card">
+                    <h4>Motivational Quote</h4>
+                    <p>{{ result.quote }}</p>
+                </div>
+            </div>
+
+            <div class="result-grid">
+                <div class="result-item"><h3>Suggested Activity</h3><p>{{ result.activity }}</p></div>
+                <div class="result-item"><h3>Music Suggestion</h3><p>{{ result.music }}</p></div>
+                <div class="result-item"><h3>Productivity Tip</h3><p>{{ result.tip }}</p></div>
+                <div class="result-item"><h3>Merchandise</h3><p>{{ result.merchandise[0] }}, {{ result.merchandise[1] }}</p></div>
+            </div>
+
+            <div class="card inner-art">
+                <h3>Algorithm-Based Mood Art</h3>
+                <p class="muted">Generated from mood and polarity signals.</p>
+                <canvas id="moodArt" width="900" height="280" data-mood="{{ result.mood }}" data-polarity="{{ result.polarity }}"></canvas>
+            </div>
+
+            {% if result.serious %}
+            <div class="support-alert">
+                <h3>This seems emotionally heavy. Want support?</h3>
+                <p>If you feel unsafe or overwhelmed, contact local emergency services immediately. In the US/Canada, call or text 988.</p>
+                <form method="POST" action="{{ url_for('support') }}" class="support-form">
+                    <input type="text" name="reason" placeholder="Tell support what you need (optional)">
+                    <button class="btn" type="submit">Contact Support Team</button>
+                </form>
+            </div>
+            {% endif %}
+        </section>
+        {% endif %}
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

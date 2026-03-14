@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | AI Mood Journal Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-bg">
+    <div class="aurora"></div>
+    <div class="auth-shell">
+        <div class="card auth-card deluxe fade-in">
+            <h1>AI Mood Journal Assistant</h1>
+            <p class="subtitle">Your emotional wellness hub with AI insights and community energy.</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" class="form">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" placeholder="Enter username" required>
+
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" placeholder="Enter password" required>
+
+                <button type="submit" class="btn glow-btn">Log In</button>
+            </form>
+
+            <p class="switch-link">No account yet? <a href="{{ url_for('signup') }}">Create one now</a></p>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

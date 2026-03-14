@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insights | AI Mood Journal Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="page-wrap">
+        <div class="top-nav deluxe-nav fade-in">
+            <h2>Personal Insights</h2>
+            <div class="nav-links">
+                <a class="mini-btn" href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a class="mini-btn" href="{{ url_for('history') }}">History</a>
+                <a class="mini-btn" href="{{ url_for('shop') }}">Shop</a>
+                <a class="mini-btn danger" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+
+        <div class="card deluxe fade-in">
+            <h3>Latest Personality</h3>
+            <p class="muted">{{ insights.latest_profile }}</p>
+            <p>Completed challenges: {{ insights.completed_challenges }}</p>
+        </div>
+
+        <div class="chart-grid">
+            <div class="card deluxe">
+                <h3>Mood Distribution</h3>
+                <canvas id="distChart"></canvas>
+            </div>
+            <div class="card deluxe">
+                <h3>Mood Trend Over Time</h3>
+                <canvas id="trendChart"></canvas>
+            </div>
+            <div class="card deluxe">
+                <h3>Game Performance</h3>
+                <canvas id="gameChart"></canvas>
+            </div>
+            <div class="card deluxe">
+                <h3>Emotional Radar</h3>
+                <canvas id="radarChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.INSIGHTS_DATA = {{ insights_json | safe }};
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

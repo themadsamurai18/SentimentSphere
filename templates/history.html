@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History | AI Mood Journal Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="page-wrap">
+        <div class="top-nav deluxe-nav fade-in">
+            <h2>Your Mood Timeline</h2>
+            <div class="nav-links">
+                <a class="mini-btn" href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a class="mini-btn" href="{{ url_for('shop') }}">Shop</a>
+                <a class="mini-btn" href="{{ url_for('insights') }}">Insights</a>
+                <a class="mini-btn danger" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+
+        <div class="card deluxe chart-card slide-up">
+            <h3>Mood Trend Snapshot</h3>
+            <canvas id="moodChart" height="120"></canvas>
+        </div>
+
+        <div class="card deluxe history-card fade-in">
+            <h3>Previous Journal Logs</h3>
+            {% if entries %}
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Mood</th>
+                                <th>Emotion</th>
+                                <th>Polarity</th>
+                                <th>Entry</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in entries %}
+                                <tr>
+                                    <td>{{ entry.created_at }}</td>
+                                    <td>{{ entry.primary_mood }}</td>
+                                    <td>{{ entry.emotion }}</td>
+                                    <td>{{ '%.2f'|format(entry.polarity) }}</td>
+                                    <td>{{ entry.entry_text }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="muted">No logs yet. Add your first mood on dashboard.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        window.MOOD_COUNTS = {{ mood_counts | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

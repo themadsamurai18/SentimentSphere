@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Center | AI Mood Journal Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page-wrap">
+        <div class="top-nav deluxe-nav fade-in">
+            <h2>Support Center</h2>
+            <div class="nav-links">
+                <a class="mini-btn" href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a class="mini-btn" href="{{ url_for('shop') }}">Shop</a>
+                <a class="mini-btn" href="{{ url_for('insights') }}">Insights</a>
+                <a class="mini-btn danger" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+
+        <div class="card deluxe fade-in">
+            <h3>Request New Support</h3>
+            <p class="muted">If you feel immediate danger, call local emergency services. In US/Canada call or text 988.</p>
+            <form method="POST" action="{{ url_for('support') }}" class="form">
+                <label for="reason">What do you need help with?</label>
+                <textarea id="reason" name="reason" rows="4" placeholder="I need support with..."></textarea>
+                <button type="submit" class="btn">Submit Ticket</button>
+            </form>
+        </div>
+
+        <div class="card deluxe fade-in">
+            <h3>My Previous Tickets</h3>
+            {% if tickets %}
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in tickets %}
+                                <tr>
+                                    <td>{{ t.created_at }}</td>
+                                    <td>{{ t.status }}</td>
+                                    <td>{{ t.reason }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="muted">No support tickets yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

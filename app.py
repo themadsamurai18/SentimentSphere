@@ -12,7 +12,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "change-this-secret-key-in-production")
-app.config["DATABASE"] = "database.db"
+# Vercel's filesystem is ephemeral, so use /tmp there to let the app boot.
+app.config["DATABASE"] = "/tmp/database.db" if os.getenv("VERCEL") else "database.db"
 
 
 EMOTION_COLOR_MAP = {
